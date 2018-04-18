@@ -12,4 +12,5 @@ package algoritmocentralizado;
 public class Proceso {
 	private int Id;
 	private boolean tipo;
+        //test git
 }
