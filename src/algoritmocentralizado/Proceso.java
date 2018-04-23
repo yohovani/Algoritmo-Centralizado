@@ -43,7 +43,7 @@ public class Proceso extends Thread{
 	
 	
 	
-	public synchronized void utilizarRecurso(){
+	public void utilizarRecurso(){
 		if(this.recurso.size() > 0){
 			System.out.println("Se utiliza el recurso por: "+this.Id);
 			System.out.println("Cola de Peticiones");
@@ -58,8 +58,9 @@ public class Proceso extends Thread{
 	
 	public void coordinador(){
 		while(this.recurso.size() > 0){
+			System.out.println("P: "+(this.procesos-1)+" cp: "+this.colaPeticiones.size());
 			if(this.acceso[0] == -1){
-				if(this.colaPeticiones.size() > 0 && this.colaPeticiones.size() == this.procesos-1)
+				if(this.colaPeticiones.size() > 0 && this.colaPeticiones.size() == (this.procesos-1))
 					this.acceso[0] = this.colaPeticiones.get(0);
 			}
 		}
@@ -67,6 +68,7 @@ public class Proceso extends Thread{
 	
 	public void procesoComun(){
 		while(this.recurso.size() > 0){
+			System.out.println("Acceso: "+this.acceso[0]+" Tamanno: "+this.recurso.size());
 			if(this.acceso[0] == this.Id){
 				utilizarRecurso();
 			}
