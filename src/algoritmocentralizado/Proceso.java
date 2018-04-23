@@ -6,6 +6,7 @@
 package algoritmocentralizado;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,10 +17,11 @@ import java.util.logging.Logger;
 public class Proceso extends Thread{
 	private int Id;
 	private boolean tipo;
-	private ArrayList<Integer> recurso;
+        private ArrayList<Integer> recurso;
 	private int acceso[];
 	private ArrayList<Integer> colaPeticiones;
 	private int procesos;
+        private Semaphore s;
 
 	public Proceso() {
 	}
@@ -67,8 +69,9 @@ public class Proceso extends Thread{
 	}
 	
 	public void procesoComun(){
-		while(this.recurso.size() > 0){
-			System.out.println("Acceso: "+this.acceso[0]+" Tamanno: "+this.recurso.size());
+		
+            while(this.recurso.size() > 0){
+			//System.out.println("Acceso: "+this.acceso[0]+" Tamanno: "+this.recurso.size());
 			if(this.acceso[0] == this.Id){
 				utilizarRecurso();
 			}
