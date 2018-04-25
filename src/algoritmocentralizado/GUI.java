@@ -146,12 +146,17 @@ public class GUI extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+		if(procesos.size() > 0){
+			for(int i=0;i<procesos.size();i++)
+				procesos.get(i).stop();
+		}
 		procesos = new ArrayList();
 	cola = new ArrayList();
 	 recurso = new ArrayList();
 	acceso[0] = -1;
 	 coord = new int[1];
 	libre[0] = true;
+	this.jTextArea1.setText("");
 		if(this.jTextField1.getText().matches("[0-9]+")){
 			int x = Integer.parseInt(jTextField1.getText());
 			Random r = new Random();
