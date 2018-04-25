@@ -55,6 +55,8 @@ public class Proceso extends Thread{
 			this.colaPeticiones.remove(0);
 			this.recurso.remove(0);
 			this.acceso[0] = -1;
+			
+			
 		}
 	}
 	
