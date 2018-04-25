@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,6 +26,7 @@ public class NewProceso extends Thread{
 	private boolean inC=false;
 	ArrayList<Integer> recurso;
 
+
 	public NewProceso(int Id, ArrayList<Integer> cola, int[] acceso, int n, boolean[] libre,int[] coord,ArrayList<Integer> recurso) {
 		this.Id = Id;
 		this.cola = cola;
@@ -38,27 +40,39 @@ public class NewProceso extends Thread{
 	
 	public void coordinador(){
 		while(true){
-			System.out.println("Acceso: "+acceso[0]);
-			if(cola.size() > 1  && acceso[0] == -1){
-				try {
-					acceso[0]=cola.get(0);
-					libre[0] = false;
-					Thread.sleep(2000);
-				} catch (InterruptedException ex) {
-					Logger.getLogger(NewProceso.class.getName()).log(Level.SEVERE, null, ex);
-				}
+			if(coordinador[0] == Id){
+				System.out.println("Acceso: "+acceso[0]);
+				if(cola.size() > 1  && acceso[0] == -1){
+					try {
+						acceso[0]=cola.get(0);
+						libre[0] = false;
+						Thread.sleep(1000);
+					} catch (InterruptedException ex) {
+						Logger.getLogger(NewProceso.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}		
 			}
+			else
+				break;
 		}
+		if(coordinador[0] != Id)
+			proceso();
 	}
 	
 	public void proceso(){
-		while(true){
-			enviarPeticion();
+		while(contador < 10){
+			if(coordinador[0] != Id){
+				enviarPeticion();
 			
-			if(obtenerAcceso()){
-				utilizarRecurso();
-			}
+				if(obtenerAcceso()){
+					utilizarRecurso();
+				}
+			}else
+				break;
+			
 		}
+		if(coordinador[0] == Id)
+			coordinador();
 	}
 
 	private synchronized void enviarPeticion() {
@@ -70,9 +84,21 @@ public class NewProceso extends Thread{
 		}
 	}
 
-	private void newCoordinador() {
+	public void newCoordinador() {
 		Random r = new Random();
-		this.coordinador[0]=r.nextInt(n);
+		int x = r.nextInt(n-1);
+		synchronized(cola){
+			for(int i=0;i<cola.size();i++){
+				if(cola.get(i) == x){
+					cola.remove(i);
+					break;
+				}
+			}
+		}
+		synchronized(coordinador){
+			this.coordinador[0]=x;
+		}
+		
 	}
 
 	private boolean obtenerAcceso() {
@@ -95,6 +121,7 @@ public class NewProceso extends Thread{
 	
 	public synchronized void utilizarRecurso(){
 		try {
+			contador++;
 			System.out.println("Acceso a: "+acceso[0]);
 			recurso.add(Id);
 			cola.remove(0);
@@ -102,7 +129,7 @@ public class NewProceso extends Thread{
 			acceso[0]=-1;
 			libre[0] = true;
 			this.inC = false;
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch (InterruptedException ex) {
 			Logger.getLogger(NewProceso.class.getName()).log(Level.SEVERE, null, ex);
 		}
